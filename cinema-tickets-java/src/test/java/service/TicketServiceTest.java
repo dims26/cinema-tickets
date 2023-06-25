@@ -51,4 +51,17 @@ public abstract class TicketServiceTest<T extends TicketService> {
         assertTrue(exception.getMessage().toLowerCase(Locale.ROOT)
                 .contains("invalid purchase request: above ticket limit"));
     }
+
+    @Test
+    public void givenNoAdult_whenPurchaseTickets_thenRaiseException() {
+        var id = 2L;
+        var childTickets = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 4);
+        var infantTickets = new TicketTypeRequest(TicketTypeRequest.Type.INFANT, 2);
+        var adultTickets = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 0);
+
+        var exception = assertThrows(InvalidPurchaseException.class,
+                () -> impl.purchaseTickets(id, childTickets, infantTickets, adultTickets));
+        assertTrue(exception.getMessage().toLowerCase(Locale.ROOT)
+                .contains("invalid purchase request: no adult present"));
+    }
 }

@@ -31,6 +31,10 @@ public class TicketServiceImpl implements TicketService {
                     throw new InvalidPurchaseException("Invalid purchase request: above ticket limit");
             }
         }
+
+        //check for  adult tickets
+        if (!typeAmountMap.containsKey(TicketTypeRequest.Type.ADULT))
+            throw new InvalidPurchaseException("Invalid purchase request: no adult present");
     }
 
     private void updateQuantityMap(HashMap<TicketTypeRequest.Type, Integer> map,
