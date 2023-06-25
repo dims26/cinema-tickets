@@ -9,8 +9,14 @@ public class TicketServiceImpl implements TicketService {
      */
 
     @Override
-    public void purchaseTickets(Long accountId, TicketTypeRequest... ticketTypeRequests) throws InvalidPurchaseException {
+    public void purchaseTickets(Long accountId,
+                                TicketTypeRequest... ticketTypeRequests) throws InvalidPurchaseException {
+        if (isAccountIdInvalid(accountId))//check account ID validity
+            throw new InvalidPurchaseException("Invalid ID: " + accountId);
 
     }
 
+    private boolean isAccountIdInvalid(Long accountId) {
+        return accountId == null || accountId < 1;
+    }
 }
