@@ -34,10 +34,12 @@ public class TicketServiceImpl implements TicketService {
         this.reservationService = reservationService;
     }
 
-    /**
-     * Should only have private methods other than the one below.
-     */
 
+    /** Handles ticket purchase requests for given account
+     * @param accountId Account purchasing tickets
+     * @param ticketTypeRequests Ticket purchase request information
+     * @throws InvalidPurchaseException if invalid request
+     */
     @Override
     public void purchaseTickets(Long accountId,
                                 TicketTypeRequest... ticketTypeRequests) throws InvalidPurchaseException {
@@ -71,6 +73,10 @@ public class TicketServiceImpl implements TicketService {
         reservationService.reserveSeat(accountId, totalSeats);
     }
 
+    /** Update map with number of tickets
+     * @param map Map to be updated
+     * @param request Ticket quantity source
+     */
     private void updateQuantityMap(HashMap<TicketTypeRequest.Type, Integer> map,
                                    TicketTypeRequest request) {
         var countedTickets = map

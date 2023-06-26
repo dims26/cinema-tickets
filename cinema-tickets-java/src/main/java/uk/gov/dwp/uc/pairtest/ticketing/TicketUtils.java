@@ -7,6 +7,11 @@ import java.util.Map;
 
 public class TicketUtils {
 
+    /** Calculate total price given categorised ticket quantities and prices
+     * @param typeQuantityMap Mapping between ticket type and quantity
+     * @param typePriceMap Mapping between ticket type and price
+     * @return Summed price of all tickets
+     */
     public static int calcTotalPrice(Map<TicketTypeRequest.Type, Integer> typeQuantityMap,
                                      Map<TicketTypeRequest.Type, Integer> typePriceMap) {
         var result = 0;
@@ -21,6 +26,11 @@ public class TicketUtils {
         return result;
     }
 
+    /** Calculate total required seats given categorised ticket quantities and allowable seating
+     * @param typeQuantityMap Mapping between ticket type and quantity
+     * @param seating List of ticket types requiring seating
+     * @return Summed number of required seats
+     */
     public static int calcNumSeats(Map<TicketTypeRequest.Type, Integer> typeQuantityMap,
                                    List<TicketTypeRequest.Type> seating) {
         var result = 0;
