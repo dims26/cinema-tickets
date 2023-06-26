@@ -24,7 +24,7 @@ public class TicketUtilsTest {
         typeToPriceMap.put(CHILD, 10);
         typeToPriceMap.put(INFANT, 0);
 
-        var exception = assertThrows(IllegalStateException.class,
+        var exception = assertThrows(IllegalArgumentException.class,
                 () -> TicketUtils.calculateTotalPrice(typeToQuantityMap, typeToPriceMap));
         assertTrue(exception.getMessage().toLowerCase(Locale.ROOT)
                 .contains("must not be null"));
@@ -41,7 +41,7 @@ public class TicketUtilsTest {
         typeToPriceMap.put(CHILD, 10);
         typeToPriceMap.put(INFANT, null);
 
-        var exception = assertThrows(IllegalStateException.class,
+        var exception = assertThrows(IllegalArgumentException.class,
                 () -> TicketUtils.calculateTotalPrice(typeToQuantityMap, typeToPriceMap));
         assertTrue(exception.getMessage().toLowerCase(Locale.ROOT)
                 .contains("must not be null"));
@@ -57,7 +57,7 @@ public class TicketUtilsTest {
         typeToPriceMap.put(ADULT, 20);
         typeToPriceMap.put(CHILD, 10);
 
-        var exception = assertThrows(IllegalStateException.class,
+        var exception = assertThrows(IllegalArgumentException.class,
                 () -> TicketUtils.calculateTotalPrice(typeToQuantityMap, typeToPriceMap));
         assertTrue(exception.getMessage().toLowerCase(Locale.ROOT)
                 .contains("must be a subset"));
@@ -90,7 +90,7 @@ public class TicketUtilsTest {
         typeToQuantityMap.put(CHILD, 15);
         var eligibleSeating = Set.of(ADULT, CHILD);
 
-        var exception = assertThrows(IllegalStateException.class,
+        var exception = assertThrows(IllegalArgumentException.class,
                 () -> TicketUtils.calculateRequiredSeats(typeToQuantityMap, eligibleSeating));
         assertTrue(exception.getMessage().toLowerCase(Locale.ROOT)
                 .contains("must not be null"));

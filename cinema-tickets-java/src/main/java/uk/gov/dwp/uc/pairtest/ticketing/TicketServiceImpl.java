@@ -68,16 +68,27 @@ public class TicketServiceImpl implements TicketService {
             throw new InvalidPurchaseException("Invalid purchase request: no adult present");
 
         //calculate ticket price
-        var totalPrice = TicketUtils.calculateTotalPrice(typeToQuantityMap, TYPE_PRICE_MAP);
+        var totalPrice = 0;
+        try {
+            totalPrice = TicketUtils.calculateTotalPrice(typeToQuantityMap, TYPE_PRICE_MAP);
+        } catch (IllegalArgumentException e) {//unexpected issue with price calculation
+            throw new InvalidPurchaseException(e.getMessage());
+        }
         paymentService.makePayment(accountId, totalPrice);
 
         //calculate number of seats required
-        var totalSeats = TicketUtils.calculateRequiredSeats(typeToQuantityMap, ELIGIBLE_SEATING);
+        var totalSeats = 0;
+
+        try {
+            totalSeats = TicketUtils.calculateRequiredSeats(typeToQuantityMap, ELIGIBLE_SEATING);
+        } catch (IllegalArgumentException e) {//unexpected issue with price calculation
+            throw new InvalidPurchaseException(e.getMessage());
+        }
         reservationService.reserveSeat(accountId, totalSeats);
     }
 
 
     private boolean isAccountIdInvalid(Long accountId) {
-        return accountId == null || accountId >= MIN_ID_VALUE;
+        return accountId == null || accountId < MIN_ID_VALUE;
     }
 }
