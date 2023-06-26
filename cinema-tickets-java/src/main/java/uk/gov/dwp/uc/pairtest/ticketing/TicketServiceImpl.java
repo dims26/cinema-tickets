@@ -10,9 +10,10 @@ import java.util.*;
 public class TicketServiceImpl implements TicketService {
 
     public static final Map<TicketTypeRequest.Type, Integer> TYPE_PRICE_MAP;
-    public static final List<TicketTypeRequest.Type> ELIGIBLE_SEATING =
-            Arrays.asList(TicketTypeRequest.Type.ADULT, TicketTypeRequest.Type.CHILD);
+    public static final Set<TicketTypeRequest.Type> ELIGIBLE_SEATING =
+            Set.of(TicketTypeRequest.Type.ADULT, TicketTypeRequest.Type.CHILD);
     public static final int MAX_NUM_TICKETS = 20;
+    private static final long MIN_ID_VALUE = 1L;
 
     static {//Only called once, would normally be set from config otherwise
         final int INFANT_PRICE = 0;
@@ -46,49 +47,37 @@ public class TicketServiceImpl implements TicketService {
         if (isAccountIdInvalid(accountId))//check account ID validity
             throw new InvalidPurchaseException("Invalid ID: " + accountId);
 
-        var totalTickets = 0;
-        var typeQuantityMap = new HashMap<TicketTypeRequest.Type, Integer>();
+        var totalNumTickets = 0;
+        var typeToQuantityMap = new HashMap<TicketTypeRequest.Type, Integer>();
 
         //consolidate ticket request quantities
         for (TicketTypeRequest ticketTypeRequest : ticketTypeRequests) {
             if (ticketTypeRequest != null && ticketTypeRequest.getNoOfTickets() > 0){//only consider requests with one or more tickets
-                updateQuantityMap(typeQuantityMap, ticketTypeRequest);
-
-                totalTickets += ticketTypeRequest.getNoOfTickets();
-                if (totalTickets > MAX_NUM_TICKETS)
+                totalNumTickets += ticketTypeRequest.getNoOfTickets();
+                if (totalNumTickets > MAX_NUM_TICKETS)
                     throw new InvalidPurchaseException("Invalid purchase request: above ticket limit");
+
+                var countedTicketsForType = typeToQuantityMap.getOrDefault(ticketTypeRequest.getTicketType(), 0)
+                        + ticketTypeRequest.getNoOfTickets();
+                typeToQuantityMap.put(ticketTypeRequest.getTicketType(), countedTicketsForType);
             }
         }
 
         //check for  adult tickets
-        if (!typeQuantityMap.containsKey(TicketTypeRequest.Type.ADULT))
+        if (!typeToQuantityMap.containsKey(TicketTypeRequest.Type.ADULT))
             throw new InvalidPurchaseException("Invalid purchase request: no adult present");
 
         //calculate ticket price
-        var totalPrice = TicketUtils.calcTotalPrice(typeQuantityMap, TYPE_PRICE_MAP);
+        var totalPrice = TicketUtils.calculateTotalPrice(typeToQuantityMap, TYPE_PRICE_MAP);
         paymentService.makePayment(accountId, totalPrice);
 
         //calculate number of seats required
-        var totalSeats = TicketUtils.calcNumSeats(typeQuantityMap, ELIGIBLE_SEATING);
+        var totalSeats = TicketUtils.calculateRequiredSeats(typeToQuantityMap, ELIGIBLE_SEATING);
         reservationService.reserveSeat(accountId, totalSeats);
-    }
-
-    /** Update map with number of tickets
-     * @param map Map to be updated
-     * @param request Ticket quantity source
-     */
-    private void updateQuantityMap(HashMap<TicketTypeRequest.Type, Integer> map,
-                                   TicketTypeRequest request) {
-        var countedTickets = map
-                .getOrDefault(request.getTicketType(), 0);
-        map.put(
-                request.getTicketType(),
-                countedTickets + request.getNoOfTickets()
-        );
     }
 
 
     private boolean isAccountIdInvalid(Long accountId) {
-        return accountId == null || accountId < 1;
+        return accountId == null || accountId >= MIN_ID_VALUE;
     }
 }

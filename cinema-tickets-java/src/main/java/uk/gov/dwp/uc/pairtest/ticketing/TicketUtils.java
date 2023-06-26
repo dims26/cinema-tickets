@@ -2,8 +2,8 @@ package uk.gov.dwp.uc.pairtest.ticketing;
 
 import uk.gov.dwp.uc.pairtest.ticketing.domain.TicketTypeRequest;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class TicketUtils {
 
@@ -12,8 +12,8 @@ public class TicketUtils {
      * @param typePriceMap Mapping between ticket type and price
      * @return Summed price of all tickets
      */
-    public static int calcTotalPrice(Map<TicketTypeRequest.Type, Integer> typeQuantityMap,
-                                     Map<TicketTypeRequest.Type, Integer> typePriceMap) {
+    public static int calculateTotalPrice(Map<TicketTypeRequest.Type, Integer> typeQuantityMap,
+                                          Map<TicketTypeRequest.Type, Integer> typePriceMap) {
         var result = 0;
         for (TicketTypeRequest.Type type : typeQuantityMap.keySet()) {
             if (!typePriceMap.containsKey(type))
@@ -28,11 +28,11 @@ public class TicketUtils {
 
     /** Calculate total required seats given categorised ticket quantities and allowable seating
      * @param typeQuantityMap Mapping between ticket type and quantity
-     * @param seating List of ticket types requiring seating
+     * @param seating Set of ticket types requiring seating
      * @return Summed number of required seats
      */
-    public static int calcNumSeats(Map<TicketTypeRequest.Type, Integer> typeQuantityMap,
-                                   List<TicketTypeRequest.Type> seating) {
+    public static int calculateRequiredSeats(Map<TicketTypeRequest.Type, Integer> typeQuantityMap,
+                                             Set<TicketTypeRequest.Type> seating) {
         var result = 0;
         for (TicketTypeRequest.Type type : typeQuantityMap.keySet()) {
             if (typeQuantityMap.get(type) == null)
