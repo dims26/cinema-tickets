@@ -1,4 +1,4 @@
-package uk.gov.dwp.uc.pairtest.exception;
+package uk.gov.dwp.uc.pairtest.ticketing.exception;
 
 public class InvalidPurchaseException extends RuntimeException {
     public InvalidPurchaseException(String message) {

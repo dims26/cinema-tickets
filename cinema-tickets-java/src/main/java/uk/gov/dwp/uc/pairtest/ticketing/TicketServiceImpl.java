@@ -1,9 +1,9 @@
-package uk.gov.dwp.uc.pairtest;
+package uk.gov.dwp.uc.pairtest.ticketing;
 
 import thirdparty.paymentgateway.TicketPaymentService;
 import thirdparty.seatbooking.SeatReservationService;
-import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
-import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
+import uk.gov.dwp.uc.pairtest.ticketing.domain.TicketTypeRequest;
+import uk.gov.dwp.uc.pairtest.ticketing.exception.InvalidPurchaseException;
 
 import java.util.*;
 

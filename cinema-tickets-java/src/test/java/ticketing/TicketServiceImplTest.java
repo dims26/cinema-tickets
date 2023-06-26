@@ -3,13 +3,13 @@ package ticketing;
 import org.junit.Test;
 import thirdparty.paymentgateway.TicketPaymentService;
 import thirdparty.seatbooking.SeatReservationService;
-import uk.gov.dwp.uc.pairtest.TicketServiceImpl;
-import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
+import uk.gov.dwp.uc.pairtest.ticketing.TicketServiceImpl;
+import uk.gov.dwp.uc.pairtest.ticketing.domain.TicketTypeRequest;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static uk.gov.dwp.uc.pairtest.TicketServiceImpl.TYPE_PRICE_MAP;
-import static uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type.*;
+import static uk.gov.dwp.uc.pairtest.ticketing.TicketServiceImpl.TYPE_PRICE_MAP;
+import static uk.gov.dwp.uc.pairtest.ticketing.domain.TicketTypeRequest.Type.*;
 
 public class TicketServiceImplTest extends TicketServiceTest<TicketServiceImpl>{
 

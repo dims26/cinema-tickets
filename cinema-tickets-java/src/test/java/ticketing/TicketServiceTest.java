@@ -2,9 +2,9 @@ package ticketing;
 
 import org.junit.Before;
 import org.junit.Test;
-import uk.gov.dwp.uc.pairtest.TicketService;
-import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
-import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
+import uk.gov.dwp.uc.pairtest.ticketing.TicketService;
+import uk.gov.dwp.uc.pairtest.ticketing.domain.TicketTypeRequest;
+import uk.gov.dwp.uc.pairtest.ticketing.exception.InvalidPurchaseException;
 
 import java.util.Locale;
 

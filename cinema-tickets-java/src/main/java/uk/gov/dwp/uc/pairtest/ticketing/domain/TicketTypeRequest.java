@@ -1,4 +1,4 @@
-package uk.gov.dwp.uc.pairtest.domain;
+package uk.gov.dwp.uc.pairtest.ticketing.domain;
 
 /**
  * Immutable Object

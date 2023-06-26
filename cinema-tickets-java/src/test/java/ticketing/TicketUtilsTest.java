@@ -1,15 +1,15 @@
 package ticketing;
 
 import org.junit.Test;
-import uk.gov.dwp.uc.pairtest.TicketUtils;
-import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
+import uk.gov.dwp.uc.pairtest.ticketing.TicketUtils;
+import uk.gov.dwp.uc.pairtest.ticketing.domain.TicketTypeRequest.Type;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 
 import static org.junit.Assert.*;
-import static uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type.*;
+import static uk.gov.dwp.uc.pairtest.ticketing.domain.TicketTypeRequest.Type.*;
 
 public class TicketUtilsTest {
 
