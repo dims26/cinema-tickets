@@ -1,4 +1,4 @@
-package service;
+package ticketing;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,12 +13,12 @@ import static org.junit.Assert.assertTrue;
 
 public abstract class TicketServiceTest<T extends TicketService> {
 
-    T impl;
-    abstract T getImpl();
+    T sut;
+    abstract T getSut();
 
     @Before
     public void setup() {
-        this.impl = getImpl();
+        this.sut = getSut();
     }
 
     @Test
@@ -26,7 +26,7 @@ public abstract class TicketServiceTest<T extends TicketService> {
         var id = 0L;
 
         var exception = assertThrows(InvalidPurchaseException.class,
-                () -> impl.purchaseTickets(id));
+                () -> sut.purchaseTickets(id));
         assertTrue(exception.getMessage().toLowerCase(Locale.ROOT).contains("invalid id: 0"));
     }
 
@@ -35,7 +35,7 @@ public abstract class TicketServiceTest<T extends TicketService> {
         Long id = null;
 
         var exception = assertThrows(InvalidPurchaseException.class,
-                () -> impl.purchaseTickets(id));
+                () -> sut.purchaseTickets(id));
         assertTrue(exception.getMessage().toLowerCase(Locale.ROOT).contains("invalid id: null"));
     }
 
@@ -47,7 +47,7 @@ public abstract class TicketServiceTest<T extends TicketService> {
         var adultTickets = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 10);
 
         var exception = assertThrows(InvalidPurchaseException.class,
-                () -> impl.purchaseTickets(id, childTickets, infantTickets, adultTickets));
+                () -> sut.purchaseTickets(id, childTickets, infantTickets, adultTickets));
         assertTrue(exception.getMessage().toLowerCase(Locale.ROOT)
                 .contains("invalid purchase request: above ticket limit"));
     }
@@ -60,7 +60,7 @@ public abstract class TicketServiceTest<T extends TicketService> {
         var adultTickets = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 0);
 
         var exception = assertThrows(InvalidPurchaseException.class,
-                () -> impl.purchaseTickets(id, childTickets, infantTickets, adultTickets));
+                () -> sut.purchaseTickets(id, childTickets, infantTickets, adultTickets));
         assertTrue(exception.getMessage().toLowerCase(Locale.ROOT)
                 .contains("invalid purchase request: no adult present"));
     }

@@ -1,12 +1,38 @@
 package uk.gov.dwp.uc.pairtest;
 
+import thirdparty.paymentgateway.TicketPaymentService;
+import thirdparty.seatbooking.SeatReservationService;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Map;
 
 public class TicketServiceImpl implements TicketService {
-    private static final int MAX_NUM_TICKETS = 20;
+
+    public static final Map<TicketTypeRequest.Type, Integer> TYPE_PRICE_MAP;
+    public static final int MAX_NUM_TICKETS = 20;
+
+    static {//Only called once, would normally be set from config otherwise
+        final int INFANT_PRICE = 0;
+        final int CHILD_PRICE = 10;
+        final int ADULT_PRICE = 20;
+
+        TYPE_PRICE_MAP = new EnumMap<>(TicketTypeRequest.Type.class);
+        TYPE_PRICE_MAP.put(TicketTypeRequest.Type.INFANT, INFANT_PRICE);
+        TYPE_PRICE_MAP.put(TicketTypeRequest.Type.CHILD, CHILD_PRICE);
+        TYPE_PRICE_MAP.put(TicketTypeRequest.Type.ADULT, ADULT_PRICE);
+    }
+
+    private final TicketPaymentService paymentService;
+    private final SeatReservationService reservationService;
+
+    public TicketServiceImpl(TicketPaymentService paymentService,
+                             SeatReservationService reservationService) {
+        this.paymentService = paymentService;
+        this.reservationService = reservationService;
+    }
 
     /**
      * Should only have private methods other than the one below.
@@ -19,12 +45,12 @@ public class TicketServiceImpl implements TicketService {
             throw new InvalidPurchaseException("Invalid ID: " + accountId);
 
         var totalTickets = 0;
-        var typeAmountMap = new HashMap<TicketTypeRequest.Type, Integer>();
+        var typeQuantityMap = new HashMap<TicketTypeRequest.Type, Integer>();
 
         //consolidate ticket request quantities
         for (TicketTypeRequest ticketTypeRequest : ticketTypeRequests) {
-            if (ticketTypeRequest.getNoOfTickets() > 0){//only consider requests with one or more tickets
-                updateQuantityMap(typeAmountMap, ticketTypeRequest);
+            if (ticketTypeRequest != null && ticketTypeRequest.getNoOfTickets() > 0){//only consider requests with one or more tickets
+                updateQuantityMap(typeQuantityMap, ticketTypeRequest);
 
                 totalTickets += ticketTypeRequest.getNoOfTickets();
                 if (totalTickets > MAX_NUM_TICKETS)
@@ -33,8 +59,12 @@ public class TicketServiceImpl implements TicketService {
         }
 
         //check for  adult tickets
-        if (!typeAmountMap.containsKey(TicketTypeRequest.Type.ADULT))
+        if (!typeQuantityMap.containsKey(TicketTypeRequest.Type.ADULT))
             throw new InvalidPurchaseException("Invalid purchase request: no adult present");
+
+        //calculate ticket price
+        var totalPrice = TicketUtils.calcTotalPrice(typeQuantityMap, TYPE_PRICE_MAP);
+        paymentService.makePayment(accountId, totalPrice);
     }
 
     private void updateQuantityMap(HashMap<TicketTypeRequest.Type, Integer> map,
