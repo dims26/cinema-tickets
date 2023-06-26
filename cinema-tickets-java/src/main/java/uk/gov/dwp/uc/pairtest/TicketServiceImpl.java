@@ -5,13 +5,13 @@ import thirdparty.seatbooking.SeatReservationService;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class TicketServiceImpl implements TicketService {
 
     public static final Map<TicketTypeRequest.Type, Integer> TYPE_PRICE_MAP;
+    public static final List<TicketTypeRequest.Type> ELIGIBLE_SEATING =
+            Arrays.asList(TicketTypeRequest.Type.ADULT, TicketTypeRequest.Type.CHILD);
     public static final int MAX_NUM_TICKETS = 20;
 
     static {//Only called once, would normally be set from config otherwise
@@ -65,6 +65,10 @@ public class TicketServiceImpl implements TicketService {
         //calculate ticket price
         var totalPrice = TicketUtils.calcTotalPrice(typeQuantityMap, TYPE_PRICE_MAP);
         paymentService.makePayment(accountId, totalPrice);
+
+        //calculate number of seats required
+        var totalSeats = TicketUtils.calcNumSeats(typeQuantityMap, ELIGIBLE_SEATING);
+        reservationService.reserveSeat(accountId, totalSeats);
     }
 
     private void updateQuantityMap(HashMap<TicketTypeRequest.Type, Integer> map,

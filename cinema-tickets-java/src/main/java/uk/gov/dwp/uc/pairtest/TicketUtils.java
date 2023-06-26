@@ -2,6 +2,7 @@ package uk.gov.dwp.uc.pairtest;
 
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
 
+import java.util.List;
 import java.util.Map;
 
 public class TicketUtils {
@@ -16,6 +17,18 @@ public class TicketUtils {
                 throw new IllegalStateException("Queried value must not be null");
 
             result += typeQuantityMap.get(type) * typePriceMap.get(type);
+        }
+        return result;
+    }
+
+    public static int calcNumSeats(Map<TicketTypeRequest.Type, Integer> typeQuantityMap,
+                                   List<TicketTypeRequest.Type> seating) {
+        var result = 0;
+        for (TicketTypeRequest.Type type : typeQuantityMap.keySet()) {
+            if (typeQuantityMap.get(type) == null)
+                throw new IllegalStateException("Queried value must not be null");
+
+            if (seating.contains(type)) result += typeQuantityMap.get(type);
         }
         return result;
     }
